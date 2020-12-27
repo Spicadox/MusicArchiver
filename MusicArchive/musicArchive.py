@@ -14,6 +14,9 @@ def downloadUpscale():
     # set waifu-caffe directory
     waifuDirectory = os.path.abspath("C:\\Users\\samph\\Documents\\waifu2x-caffe")
 
+    # set archive directory
+    archiveDirectory = os.path.abspath("C:\\Users\\samph\\Videos\\FFMPEG VIDEO\\youtube_music_ download\\waifu2x-youtube-dl scripts\\【archive】.txt")
+
     # ask and set url if argv isn't specified
     if(len(sys.argv) < 2):
         url = input("URL: ")
@@ -28,8 +31,13 @@ def downloadUpscale():
     m4aFile = fName + ".m4a"
     mp3File = fName + ".mp3"
 
+    # youtube-dlc arguments
+    ytdlc_list = ['youtube-dlc', '--download-archive']
+    ytdlc_list += [archiveDirectory]
+    ytdlc_list += ['-f', 'bestaudio', '-x', '--add-metadata', '--write-thumbnail', url]
+
     # Run youtube-dlc to download url
-    subprocess.run("youtube-dlc -f bestaudio -x --add-metadata --write-thumbnail " + url)
+    subprocess.run(ytdlc_list)
 
     # Set name of downloaded images
     pngFile = fName + ".png"
@@ -86,7 +94,7 @@ def downloadUpscale():
             print("Exited Successfully")
             break
         else:
-            print("Error, Can't Find Image\n Exiting")
+            print("Error, Can't Find Image or Already Archived\nExiting")
             break
 
 
