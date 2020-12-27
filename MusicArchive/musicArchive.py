@@ -6,7 +6,7 @@ import sys
 def downloadUpscale():
     # set current directory
     # currentDirectory = "C:\\Users\\samph\\Videos\\FFMPEG VIDEO\\youtube_music_ download"
-    currentDirectory = os.path.abspath("C:\\Users\\samph\\Videos\\FFMPEG VIDEO\\youtube_music_ download\\waifu2x-youtube-dl scripts\\test")
+    currentDirectory = os.path.abspath("C:\\Users\\samph\\Videos\\FFMPEG VIDEO\\youtube_music_ download")
 
     # go to directory
     os.chdir(currentDirectory)
