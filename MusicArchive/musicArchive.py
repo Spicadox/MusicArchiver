@@ -42,11 +42,12 @@ def downloadUpscale():
     # Set name of downloaded images
     pngFile = fName + ".png"
     webpFile = fName + ".webp"
+    jpgFile = fName + ".jpg"
 
     # upscale image and add image cover
     for path, directories, files in os.walk(currentDirectory):
         # If webp or png exist
-        if (any(x in files for x in [pngFile, webpFile])):
+        if (any(x in files for x in [pngFile, webpFile, jpgFile])):
             # If opus, m4a, and worse case mp3 file exist
             if (opusFile in files):
                 fullAudioName = opusFile
@@ -59,9 +60,19 @@ def downloadUpscale():
                 print("Unsupported audio file")
                 break
 
+            # If webp or jpg image exists
+            if(webpFile in files):
+                imageFile = webpFile
+            elif(jpgFile in files):
+                imageFile = jpgFile
+            else:
+                # If image file isn't webp or jpg
+                print("Unsupported image file")
+                break
+
             # FFmpeg arguments list
             ffmpeg_list = ['ffmpeg', '-i']
-            ffmpeg_list += [webpFile]
+            ffmpeg_list += [imageFile]
             ffmpeg_list += ['-vf', 'scale=iw*min(1500/iw\,1500/ih):ih*min(1500/iw\,1500/ih),pad=1500:1500:(1500-iw)/2:(1500-ih)/2', 'temp.png']
             # subprocess.run("ffmpeg -i " + webpFile + " -vf 'scale=iw*min(1500/iw\,1500/ih):ih*min(1500/iw\,1500/ih),pad=1500:1500:(1500-iw)/2:(1500-ih)/2' temp.png")
             # subprocess.run("waifu2x-caffe-cui.exe -i temp.png -m noise_scale --scale_ratio 2 --noise_level 2 --tta 1 -p cudnn -o " + pngFile)
@@ -90,7 +101,7 @@ def downloadUpscale():
 
             # Remove all image files and exit
             os.remove("temp_2.png")
-            os.remove(webpFile)
+            os.remove(imageFile)
             print("\nOperation Success")
             break
         else:
