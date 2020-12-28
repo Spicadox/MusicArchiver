@@ -91,12 +91,16 @@ def downloadUpscale():
             # Remove all image files and exit
             os.remove("temp_2.png")
             os.remove(webpFile)
-            print("Exited Successfully")
+            print("\nOperation Success")
             break
         else:
-            print("Error, Can't Find Image or Already Archived\nExiting")
+            print("\nError, Can't Find Image or Already Archived\nExiting")
             break
 
 
 if __name__ == '__main__':
-    downloadUpscale()
+    repeat = ''
+    doNotRepeat_list = ['n', 'no', 'No', 'N', 'NO']
+    while(repeat not in doNotRepeat_list):
+        downloadUpscale()
+        repeat = input("\nWould you like to download again?(y/n): ")
