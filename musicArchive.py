@@ -24,7 +24,7 @@ def downloadUpscale():
         url = sys.argv[1]
 
     # get the full file name
-    fullFileName = subprocess.run("youtube-dlc --get-filename " + url, capture_output=True, text=True).stdout.strip("\n")
+    fullFileName = subprocess.run("youtube-dl --get-filename " + url, capture_output=True, text=True).stdout.strip("\n")
     fName = fullFileName.rsplit(".", 1)[0]
 
     opusFile = fName + ".opus"
@@ -32,7 +32,7 @@ def downloadUpscale():
     mp3File = fName + ".mp3"
 
     # youtube-dlc arguments
-    ytdlc_list = ['youtube-dlc', '--download-archive']
+    ytdlc_list = ['youtube-dl', '--download-archive']
     ytdlc_list += [archiveDirectory]
     ytdlc_list += ['-f', 'bestaudio', '-x', '--add-metadata', '--write-thumbnail', url]
 
@@ -81,6 +81,8 @@ def downloadUpscale():
             subprocess.run(ffmpeg_list)
 
             # Move the png to get upscaled
+            if os.path.isfile(waifuDirectory + "\\temp.png"):
+                os.remove(waifuDirectory + "\\temp.png")
             shutil.move("temp.png", waifuDirectory)
             # Change directory to waifu2x-caffe-cui
             os.chdir(waifuDirectory)
