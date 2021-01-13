@@ -1,7 +1,10 @@
+#!/usr/bin/env python
 import os
 import subprocess
 import shutil
 import sys
+import csv
+
 
 def downloadUpscale():
     # set current directory
@@ -69,47 +72,83 @@ def downloadUpscale():
                 # If image file isn't webp or jpg
                 print("Unsupported image file")
                 break
+            try:
+                # FFmpeg arguments list
+                ffmpeg_list = ['ffmpeg', '-i']
+                ffmpeg_list += [imageFile]
+                ffmpeg_list += ['-vf', 'scale=iw*min(1500/iw\,1500/ih):ih*min(1500/iw\,1500/ih),pad=1500:1500:(1500-iw)/2:(1500-ih)/2', 'temp.png']
+                # subprocess.run("ffmpeg -i " + webpFile + " -vf 'scale=iw*min(1500/iw\,1500/ih):ih*min(1500/iw\,1500/ih),pad=1500:1500:(1500-iw)/2:(1500-ih)/2' temp.png")
+                # subprocess.run("waifu2x-caffe-cui.exe -i temp.png -m noise_scale --scale_ratio 2 --noise_level 2 --tta 1 -p cudnn -o " + pngFile)
+                # subprocess.run("kid3-cli -c 'set picture:'temp.png' 'Album Cover'' " + fullAudioName)
 
-            # FFmpeg arguments list
-            ffmpeg_list = ['ffmpeg', '-i']
-            ffmpeg_list += [imageFile]
-            ffmpeg_list += ['-vf', 'scale=iw*min(1500/iw\,1500/ih):ih*min(1500/iw\,1500/ih),pad=1500:1500:(1500-iw)/2:(1500-ih)/2', 'temp.png']
-            # subprocess.run("ffmpeg -i " + webpFile + " -vf 'scale=iw*min(1500/iw\,1500/ih):ih*min(1500/iw\,1500/ih),pad=1500:1500:(1500-iw)/2:(1500-ih)/2' temp.png")
-            # subprocess.run("waifu2x-caffe-cui.exe -i temp.png -m noise_scale --scale_ratio 2 --noise_level 2 --tta 1 -p cudnn -o " + pngFile)
-            # subprocess.run("kid3-cli -c 'set picture:'temp.png' 'Album Cover'' " + fullAudioName)
+                subprocess.run(ffmpeg_list)
 
-            subprocess.run(ffmpeg_list)
+                # Move the png to get upscaled
 
-            # Move the png to get upscaled
-            if os.path.isfile(waifuDirectory + "\\temp.png"):
-                os.remove(waifuDirectory + "\\temp.png")
-            shutil.move("temp.png", waifuDirectory)
-            # Change directory to waifu2x-caffe-cui
-            os.chdir(waifuDirectory)
+                if os.path.isfile(waifuDirectory + "\\temp.png"):
+                    os.remove(waifuDirectory + "\\temp.png")
+                    shutil.move("temp.png", waifuDirectory)
+                    # Change directory to waifu2x-caffe-cui
+                    os.chdir(waifuDirectory)
 
-            # Waifu2x-caffe arguments and run it
-            waifu2x_list = ['waifu2x-caffe-cui.exe', '-i', 'temp.png', '-m', 'noise_scale', '--scale_ratio', '2', '--noise_level', '2', '--tta', '1', '-p', 'cudnn', '-o', 'temp_2.png']
-            subprocess.run(waifu2x_list)
+                    # Waifu2x-caffe arguments and run it
+                    waifu2x_list = ['waifu2x-caffe-cui.exe', '-i', 'temp.png', '-m', 'noise_scale', '--scale_ratio', '2', '--noise_level', '2', '--tta', '1', '-p', 'cudnn', '-o', 'temp_2.png']
+                    subprocess.run(waifu2x_list)
 
-            # Change directory and move upscaled image back to original directory and remove original png
-            shutil.move("temp_2.png", currentDirectory)
-            os.remove("temp.png")
-            os.chdir(currentDirectory)
+                    # Change directory and move upscaled image back to original directory and remove original png
+                    shutil.move("temp_2.png", currentDirectory)
+                    os.remove("temp.png")
+                    os.chdir(currentDirectory)
 
-            # Kids3-cli arguments and run it to add image cover
-            kids3_list = ['kid3-cli', '-c', "set picture:temp_2.png 'Album Cover'"]
-            kids3_list += [fullAudioName]
-            subprocess.run(kids3_list)
+                    # Kids3-cli arguments and run it to add image cover
+                    kids3_list = ['kid3-cli', '-c', "set picture:temp_2.png 'Album Cover'"]
+                    kids3_list += [fullAudioName]
+                    subprocess.run(kids3_list)
 
-            # Remove all image files and exit
-            os.remove("temp_2.png")
-            os.remove(imageFile)
-            print("\nOperation Success")
-            break
-        else:
-            print("\nError, Can't Find Image or Already Archived\nExiting")
-            break
+                    # Remove all image files and exit
+                    os.remove("temp_2.png")
+                    os.remove(imageFile)
+                    print("\nOperation Success")
+                    break
+                else:
+                    print("\nError, Can't Find Image or Already Archived\nExiting")
 
+                    if os.path.isfile(waifuDirectory + "\\temp.png"):
+                        os.remove(waifuDirectory + "\\temp.png")
+                    if os.path.isfile(currentDirectory + "\\temp.png"):
+                        os.remove(currentDirectory + "\\temp.png")
+                    if os.path.isfile(currentDirectory + "\\temp_2.png"):
+                        os.remove(currentDirectory + "\\temp_2.png")
+                    if os.path.isfile(waifuDirectory + "\\temp_2.png"):
+                        os.remove(waifuDirectory + "\\temp_2.png")
+                    if os.path.isfile(currentDirectory + "\\" + imageFile):
+                        os.remove(currentDirectory + "\\" + imageFile)
+                    if os.path.isfile(currentDirectory + "\\" + fullAudioName):
+                        os.remove(currentDirectory + "\\" + fullAudioName)
+                        with open(r'C:\Users\samph\Videos\FFMPEG VIDEO\youtube_music_ download\waifu2x-youtube-dl scripts\【archive】.txt', "r+") as f:
+                            lines = f.readlines()
+                            lines = lines[:-1]
+                            for line in lines:
+                                f.write(line)
+            except Exception:
+                print("Error")
+                if os.path.isfile(waifuDirectory + "\\temp.png"):
+                    os.remove(waifuDirectory + "\\temp.png")
+                if os.path.isfile(currentDirectory + "\\temp.png"):
+                    os.remove(currentDirectory + "\\temp.png")
+                if os.path.isfile(currentDirectory + "\\temp_2.png"):
+                    os.remove(currentDirectory + "\\temp_2.png")
+                if os.path.isfile(waifuDirectory + "\\temp_2.png"):
+                    os.remove(waifuDirectory + "\\temp_2.png")
+                if os.path.isfile(currentDirectory + "\\" + imageFile):
+                    os.remove(currentDirectory + "\\" + imageFile)
+                if os.path.isfile(currentDirectory + "\\" + fullAudioName):
+                    os.remove(currentDirectory + "\\" + fullAudioName)
+                    with open(archiveDirectory, "r+") as f:
+                        lines = f.readlines()
+                        lines = lines[:-1]
+                        for line in lines:
+                            f.write(line)
 
 if __name__ == '__main__':
     repeat = ''
