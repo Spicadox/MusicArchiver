@@ -7,17 +7,23 @@ import sys
 
 def downloadUpscale():
     # set current directory
-    # currentDirectory = "C:\\Users\\samph\\Videos\\FFMPEG VIDEO\\youtube_music_ download"
-    currentDirectory = os.path.abspath("C:\\Users\\samph\\Videos\\FFMPEG VIDEO\\youtube_music_ download")
+    currentDirectory = input("Set Directory(if no value then default is cwd): ")
+
+    if len(currentDirectory) == 0:
+        currentDirectory = os.getcwd()
 
     # go to directory
     os.chdir(currentDirectory)
 
     # set waifu-caffe directory
-    waifuDirectory = os.path.abspath("C:\\Users\\samph\\Documents\\waifu2x-caffe")
+    userWaifuDirectory = input("Waifu2x-Caffe Directory: ")
+    waifuDirectory = userWaifuDirectory
 
     # set archive directory
-    archiveDirectory = os.path.abspath("C:\\Users\\samph\\Videos\\FFMPEG VIDEO\\youtube_music_ download\\waifu2x-youtube-dl scripts\\【archive】.txt")
+    userArchiveDirectory = input("Archive File Directory(if no value then default is cwd): ")
+    if len(userArchiveDirectory) == 0:
+        userArchiveDirectory = os.getcwd() + "\\archive.txt"
+    archiveDirectory = userArchiveDirectory
 
     # ask and set link if argv isn't specified
     if(len(sys.argv) < 2):
