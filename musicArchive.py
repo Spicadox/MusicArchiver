@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 import os
+import re
 import subprocess
 import shutil
 import sys
+import youtube_dl
 
 
 def downloadUpscale():
@@ -47,7 +49,8 @@ def downloadUpscale():
 
         # get the full file name
         fullFileName = subprocess.run("youtube-dl --get-filename " + url, capture_output=True, text=True).stdout.strip("\n")
-        fName = fullFileName.rsplit(".", 1)[0]
+        originalFileName = fullFileName.rsplit(".", 1)[0]
+        fName = checkFileName(originalFileName)
 
         opusFile = fName + ".opus"
         m4aFile = fName + ".m4a"
@@ -151,6 +154,11 @@ def downloadUpscale():
                             lines = lines[:-1]
                             for line in lines:
                                 f.write(line)
+
+def checkFileName(fname):
+    illegalCharacters = re.compile(r"[\\*?<>:\"/\|]")
+    newFileName = re.sub(illegalCharacters, "_", fname)
+    return newFileName
 
 if __name__ == '__main__':
     repeat = ''
